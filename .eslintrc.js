@@ -32,19 +32,19 @@ module.exports = {
     'react/no-array-index-key': 0,
     'no-param-reassign': 0,
     'react/react-in-jsx-scope': 0,
+    'react/function-component-definition': [
+      'error',
+      {
+        namedComponents: ['function-declaration', 'arrow-function'],
+        unnamedComponents: 'arrow-function',
+      },
+    ],
     'jsx-a11y/anchor-is-valid': [
       'error',
       {
         components: ['Link'],
         specialLink: ['to', 'hrefLeft', 'hrefRight'],
         aspects: ['noHref', 'invalidHref', 'preferButton'],
-      },
-    ],
-    'react/function-component-definition': [
-      'error',
-      {
-        namedComponents: ['function-declaration', 'arrow-function'],
-        unnamedComponents: 'arrow-function',
       },
     ],
   },
