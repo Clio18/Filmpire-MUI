@@ -2,7 +2,7 @@ import { makeStyles } from '@mui/styles';
 
 export default makeStyles(() => ({
   root: {
-    displae: 'flex',
+    display: 'flex',
     height: '100%',
   },
   toolbar: {
