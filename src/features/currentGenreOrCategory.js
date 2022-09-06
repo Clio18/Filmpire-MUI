@@ -12,8 +12,11 @@ export const genreOrCategory = createSlice({
       state.genreIdOrCategoryName = action.payload;
       state.searchQuery = '';
     },
+    searchMovie: (state, action) => {
+      state.searchQuery = action.payload;
+    },
   },
 });
 
-export const { selectGenreOrCategory } = genreOrCategory.actions;
+export const { selectGenreOrCategory, searchMovie } = genreOrCategory.actions;
 export default genreOrCategory.reducer;
