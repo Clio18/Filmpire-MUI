@@ -19,7 +19,7 @@ const Profile = () => {
           My Profile
         </Typography>
         <Button color="inherit" onClick={logout}>
-          Logout &nbsp <ExitToApp />
+          Logout &nbsp; <ExitToApp />
         </Button>
       </Box>
       {!favoriteMovies.length ? (
