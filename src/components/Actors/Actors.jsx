@@ -18,8 +18,6 @@ const Actors = () => {
   const navigate = useNavigate();
   const classes = useStyles();
 
-  console.log(movies);
-
   if (isFetching) {
     return (
       <Box display="flex" justifyContent="center">
