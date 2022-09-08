@@ -8,10 +8,11 @@ import {
 } from '../../services/TMDB';
 import useStyles from './styles';
 import MovieList from '../MovieList/MovieList';
+import Pagination from '../Pagination/Pagination';
 
 const Actors = () => {
   const { id } = useParams();
-  const page = 1;
+  const [page, setPage] = useState(1);
   const { data, isFetching, error } = useGetActorsQuery(id);
   const { data: movies } = useGetMovieByActorIdQuery({ id, page });
   const navigate = useNavigate();
@@ -93,6 +94,11 @@ const Actors = () => {
           Movies
         </Typography>
         {movies && <MovieList movies={movies} numberOfMovies={12} />}
+        <Pagination
+          currentPage={page}
+          setPage={setPage}
+          totalPages={data.total_pages}
+        />
       </Box>
     </>
   );
