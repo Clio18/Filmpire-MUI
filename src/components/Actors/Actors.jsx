@@ -3,8 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Typography, Button, Grid, Box, CircularProgress } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import {
-  useGetActorsQuery,
-  useGetMovieByActorIdQuery,
+  useGetActorQuery,
+  useGetMoviesByActorIdQuery,
 } from '../../services/TMDB';
 import useStyles from './styles';
 import MovieList from '../MovieList/MovieList';
@@ -13,8 +13,8 @@ import Pagination from '../Pagination/Pagination';
 const Actors = () => {
   const { id } = useParams();
   const [page, setPage] = useState(1);
-  const { data, isFetching, error } = useGetActorsQuery(id);
-  const { data: movies } = useGetMovieByActorIdQuery({ id, page });
+  const { data, isFetching, error } = useGetActorQuery(id);
+  const { data: movies } = useGetMoviesByActorIdQuery({ id, page });
   const navigate = useNavigate();
   const classes = useStyles();
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Typography,
@@ -20,35 +20,96 @@ import {
   Remove,
   ArrowBack,
 } from '@mui/icons-material';
-
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import MovieList from '../MovieList/MovieList';
-import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
 import genreIcons from '../../assets/genres';
+import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
+import MovieList from '../MovieList/MovieList';
+
 import {
+  useGetListQuery,
   useGetMovieQuery,
-  useGetRecomendationsQuery,
+  useGetRecommendationsQuery,
 } from '../../services/TMDB';
 import useStyles from './styles';
+import { userSelector } from '../../features/auth';
 
 const MovieInformation = () => {
   const { id } = useParams();
-  const { data, isFetching, error } = useGetMovieQuery(id);
+  const { user } = useSelector(userSelector);
+
+  const { data: favoriteMovies } = useGetListQuery({
+    listName: 'favorite/movies',
+    accountId: user.id,
+    sessionId: localStorage.getItem('session_id'),
+    page: 1,
+  });
+
+  const { data: watchlistMovies } = useGetListQuery({
+    listName: 'watchlist/movies',
+    accountId: user.id,
+    sessionId: localStorage.getItem('session_id'),
+    page: 1,
+  });
+
   const { data: recommendations, isFetching: isRecommendationsFetching } =
-    useGetRecomendationsQuery({
-      list: 'recommendations',
-      movie_id: id,
-    });
+    useGetRecommendationsQuery({ movie_id: id, list: '/recommendations' });
+
+  const { data, isFetching, error } = useGetMovieQuery(id);
+
+  const [isMovieFavorited, setIsMovieFavorited] = useState(false);
+  const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
+
+  useEffect(() => {
+    setIsMovieFavorited(
+      favoriteMovies &&
+        data &&
+        !!favoriteMovies.results.find((movie) => movie.id === data.id),
+    );
+  }, [favoriteMovies, data]);
+
+  useEffect(() => {
+    setIsMovieWatchlisted(
+      watchlistMovies &&
+        data &&
+        !!watchlistMovies.results.find((movie) => movie.id === data.id),
+    );
+  }, [watchlistMovies, data]);
+
   const classes = useStyles();
   const dispatch = useDispatch();
-  const isMovieFavorite = false;
-  const isMovieWatchlisted = false;
   const [open, setOpen] = useState(false);
 
-  const addToFavorites = () => {};
-  const addToWatchlist = () => {};
+  const addToFavorites = async () => {
+    await axios.post(
+      `https://api.themoviedb.org/3/account/${user.id}/favorite?api_key=${
+        process.env.REACT_APP_TMDB_KEY
+      }&session_id=${localStorage.getItem('session_id')}`,
+      {
+        media_type: 'movie',
+        media_id: id,
+        favorite: !isMovieFavorited,
+      },
+    );
+
+    setIsMovieFavorited((prev) => !prev);
+  };
+
+  const addToWatchlist = async () => {
+    await axios.post(
+      `https://api.themoviedb.org/3/account/${user.id}/watchlist?api_key=${
+        process.env.REACT_APP_TMDB_KEY
+      }&session_id=${localStorage.getItem('session_id')}`,
+      {
+        media_type: 'movie',
+        media_id: id,
+        watchlist: !isMovieWatchlisted,
+      },
+    );
+
+    setIsMovieWatchlisted((prev) => !prev);
+  };
 
   if (isFetching) {
     return (
@@ -61,7 +122,7 @@ const MovieInformation = () => {
   if (error) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center">
-        <Link to="/">Something goes wrong</Link>
+        <Link to="/">Something has gone wrong. Go back</Link>
       </Box>
     );
   }
@@ -108,13 +169,12 @@ const MovieInformation = () => {
           </Typography>
         </Grid>
         <Grid item className={classes.genresContainer}>
-          {data.genres.map((genre) => (
+          {data.genres.map((genre, i) => (
             <Link
               key={genre.name}
               className={classes.links}
               to="/"
               onClick={() => dispatch(selectGenreOrCategory(genre.id))}
-              style={{ textUnderline: 'none' }}
             >
               <img
                 src={genreIcons[genre.name.toLowerCase()]}
@@ -134,7 +194,7 @@ const MovieInformation = () => {
           {data.overview}
         </Typography>
         <Typography variant="h5" gutterBottom>
-          Top cast
+          Top Cast
         </Typography>
         <Grid item container spacing={2}>
           {data &&
@@ -144,6 +204,7 @@ const MovieInformation = () => {
                   character.profile_path && (
                     <Grid
                       key={i}
+                      item
                       xs={4}
                       md={2}
                       component={Link}
@@ -169,9 +230,9 @@ const MovieInformation = () => {
         <Grid item container style={{ marginTop: '2rem' }}>
           <div className={classes.buttonsContainer}>
             <Grid item xs={12} sm={6} className={classes.buttonsContainer}>
-              <ButtonGroup size="small" variant="outlined">
+              <ButtonGroup size="medium" variant="outlined">
                 <Button
-                  target="blank"
+                  target="_blank"
                   rel="noopener noreferrer"
                   href={data.homepage}
                   endIcon={<Language />}
@@ -179,7 +240,7 @@ const MovieInformation = () => {
                   Website
                 </Button>
                 <Button
-                  target="blank"
+                  target="_blank"
                   rel="noopener noreferrer"
                   href={`https://www.imdb.com/title/${data.imdb_id}`}
                   endIcon={<MovieIcon />}
@@ -200,10 +261,10 @@ const MovieInformation = () => {
                 <Button
                   onClick={addToFavorites}
                   endIcon={
-                    isMovieFavorite ? <FavoriteBorderOutlined /> : <Favorite />
+                    isMovieFavorited ? <FavoriteBorderOutlined /> : <Favorite />
                   }
                 >
-                  {isMovieFavorite ? 'Unfavorite' : 'Favorite'}
+                  {isMovieFavorited ? 'Unfavorite' : 'Favorite'}
                 </Button>
                 <Button
                   onClick={addToWatchlist}
@@ -212,8 +273,8 @@ const MovieInformation = () => {
                   Watchlist
                 </Button>
                 <Button
-                  endIcon={<ArrowBack />}
                   sx={{ borderColor: 'primary.main' }}
+                  endIcon={<ArrowBack />}
                 >
                   <Typography
                     component={Link}
@@ -232,12 +293,13 @@ const MovieInformation = () => {
       </Grid>
       <Box marginTop="5rem" width="100%">
         <Typography variant="h3" gutterBottom align="center">
-          You may also liked
+          You might also like
         </Typography>
+        {/* Loop through the recommended movies... */}
         {recommendations ? (
           <MovieList movies={recommendations} numberOfMovies={12} />
         ) : (
-          <Box>Sorry, nothing was found</Box>
+          <Box>Sorry, nothing was found.</Box>
         )}
       </Box>
       <Modal

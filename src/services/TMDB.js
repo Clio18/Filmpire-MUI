@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const tmdbApiKey = process.env.REACT_APP_TMDB_KEY;
+
 export const tmdbApi = createApi({
   reducerPath: 'tmdbApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://api.themoviedb.org/3' }),
@@ -37,25 +38,32 @@ export const tmdbApi = createApi({
         return `movie/popular?page=${page}&api_key=${tmdbApiKey}`;
       },
     }),
-    // Get movie
+
+    // Get Movie
     getMovie: builder.query({
       query: (id) =>
         `/movie/${id}?append_to_response=videos,credits&api_key=${tmdbApiKey}`,
     }),
-    // Get user specific list
-    getRecomendations: builder.query({
+
+    getList: builder.query({
+      query: ({ listName, accountId, sessionId, page }) =>
+        `/account/${accountId}/${listName}?api_key=${tmdbApiKey}&session_id=${sessionId}&page=${page}`,
+    }),
+
+    // Get user specific lists
+    getRecommendations: builder.query({
       query: ({ movie_id, list }) =>
         `/movie/${movie_id}/${list}?api_key=${tmdbApiKey}`,
     }),
-    // Get actor
-    getActors: builder.query({
-      query: (id) => `person/${id}?api_key=${tmdbApiKey}`,
+
+    // Get Actor details
+    getActor: builder.query({
+      query: ({ actor_id }) => `/person/${actor_id}?api_key=${tmdbApiKey}`,
     }),
 
-    // Get movie by actor's id
-    getMovieByActorId: builder.query({
+    getMoviesByActorId: builder.query({
       query: ({ id, page }) =>
-        `discover/movie?with_cast=${id}&page=${page}&api_key=${tmdbApiKey}`,
+        `/discover/movie?with_cast=${id}&page=${page}&api_key=${tmdbApiKey}`,
     }),
   }),
 });
@@ -64,7 +72,8 @@ export const {
   useGetMoviesQuery,
   useGetGenresQuery,
   useGetMovieQuery,
-  useGetRecomendationsQuery,
-  useGetActorsQuery,
-  useGetMovieByActorIdQuery,
+  useGetListQuery,
+  useGetRecommendationsQuery,
+  useGetActorQuery,
+  useGetMoviesByActorIdQuery,
 } = tmdbApi;
