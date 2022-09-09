@@ -7,7 +7,6 @@ import {
   Grid,
   Box,
   CircularProgress,
-  useMediaQuery,
   Rating,
 } from '@mui/material';
 import {
@@ -53,8 +52,10 @@ const MovieInformation = () => {
     page: 1,
   });
 
-  const { data: recommendations, isFetching: isRecommendationsFetching } =
-    useGetRecommendationsQuery({ movie_id: id, list: '/recommendations' });
+  const { data: recommendations } = useGetRecommendationsQuery({
+    movie_id: id,
+    list: '/recommendations',
+  });
 
   const { data, isFetching, error } = useGetMovieQuery(id);
 
@@ -180,6 +181,7 @@ const MovieInformation = () => {
                 src={genreIcons[genre.name.toLowerCase()]}
                 className={classes.genreImage}
                 height={30}
+                alt="icon"
               />
               <Typography color="textPrimary" variant="subtitle1">
                 {genre.name}

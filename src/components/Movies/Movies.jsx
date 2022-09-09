@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   CircularProgress,
@@ -8,7 +8,6 @@ import {
 import { useSelector } from 'react-redux';
 import { useGetMoviesQuery } from '../../services/TMDB';
 import MovieList from '../MovieList/MovieList';
-import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
 import Pagination from '../Pagination/Pagination';
 import FeaturedMovie from '../FeaturedMovie/FeaturedMovie';
 
