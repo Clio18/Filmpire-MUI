@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React from 'react';
+import React, { useRef } from 'react';
 import { CssBaseline } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
 
@@ -9,9 +9,12 @@ import MovieInformation from './MovieInformation/MovieInformation';
 import Movies from './Movies/Movies';
 import NavBar from './NavBar/NavBar';
 import Profile from './Profile/Profile';
+import useAlan from './Alan';
 
 function App() {
   const classes = useStyles();
+  const alanBtnContainer = useRef();
+  useAlan();
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -26,6 +29,7 @@ function App() {
           <Route path="/actors/:id" element={<Actors />} />
         </Routes>
       </main>
+      <div ref={alanBtnContainer} />
     </div>
   );
 }
