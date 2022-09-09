@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   AppBar,
   IconButton,
@@ -22,6 +22,7 @@ import Sidebar from '../Sidebar/Sidebar';
 import Search from '../Search/Search.jsx';
 import { fetchToken, createSessionId, movieApi } from '../../utils';
 import { setUser, userSelector } from '../../features/auth';
+import { ColorModeContext } from '../../utils/ToggleColorMode';
 
 const NavBar = () => {
   const { isAuthenticated, user } = useSelector(userSelector);
@@ -32,6 +33,7 @@ const NavBar = () => {
   const dispatch = useDispatch();
   const token = localStorage.getItem('request_token');
   const sessionIdFromLocalStorage = localStorage.getItem('session_id');
+  const colorMode = useContext(ColorModeContext);
 
   useEffect(() => {
     const logInUser = async () => {
@@ -75,7 +77,7 @@ const NavBar = () => {
             sx={{
               ml: 1,
             }}
-            onClick={() => {}}
+            onClick={colorMode.toggleColorMode}
           >
             {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
           </IconButton>
