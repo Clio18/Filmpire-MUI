@@ -19,18 +19,17 @@ function useAlan() {
       key: 'b95b548e515350926cf1f2c56300590d2e956eca572e1d8b807a3e2338fdd0dc/stage',
       onCommand: ({ command, mode, genres, genreOrCategory, query }) => {
         if (command === 'chooseGenre') {
-          const foundGenre = genres.find(
+          const allGenres = genres;
+          console.log(allGenres);
+          console.log(genreOrCategory);
+          const foundGenre = allGenres.find(
             (g) => g.name.toLowerCase() === genreOrCategory.toLowerCase(),
           );
+          console.log(foundGenre);
+
           if (foundGenre) {
             navigate('/');
             dispatch(selectGenreOrCategory(foundGenre.id));
-          } else {
-            const category = genreOrCategory.startsWith('top')
-              ? 'top_rated'
-              : genreOrCategory;
-            navigate('/');
-            dispatch(selectGenreOrCategory(category));
           }
         } else if (command === 'changeMode') {
           if (mode === 'light') {
@@ -42,7 +41,7 @@ function useAlan() {
           fetchToken();
         } else if (command === 'logout') {
           localStorage.clear();
-          navigate('/');
+          window.location.href = '/';
         } else if (command === 'search') {
           dispatch(searchMovie(query));
         }

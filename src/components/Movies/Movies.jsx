@@ -26,8 +26,6 @@ const Movies = () => {
     searchQuery,
   });
 
-  console.log(data);
-
   if (isFetching) {
     return (
       <Box display="flex" justifyContent="center">
